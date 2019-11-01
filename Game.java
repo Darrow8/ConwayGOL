@@ -24,30 +24,34 @@ import javax.swing.JFrame;//Import the Graphic Library for JFrame (Abstract Wind
 //         }
 //     }
 // }
-class Cell {
-    public static int ypos;
-    public static int xpos;
-    public static boolean alive;
-    Cell(int x, int y, boolean living){
+class Cell 
+{
+    // these variables were originally static, which would have definitely broke the code
+    public int ypos;
+    public int xpos;
+    public boolean alive;
+    Cell(int x, int y, boolean living)
+    {
         ypos = y;
         xpos = x;
         alive = living;
     }
-    // public void setStuff(int x, int y, boolean living) {
-    //     ypos = y;
-    //     xpos = x;
-    //     alive = living;
-    // }
-
-    public void returnVals() {
-        System.out.println("I am " + alive);
-        System.out.println("My Xpos is " + xpos);
-        System.out.println("My Ypos is " + ypos);
-        System.out.println("\n");
-
+    public void returnVals() 
+    {
+        if(alive == true)
+        {
+            System.out.println("Cell at (" + xpos + ", " + ypos + ") is alive.\n");
+        }
+        else
+        {
+            System.out.println("Cell at (" + xpos + ", " + ypos + ") is dead.\n");
+        }
     }
-    public static boolean checkLiving(){
+    // why was this function originally static???
+    // I commented out this function because the variable that it is returning is PUBLIC
+    /*public boolean checkLiving()
+    {
         // cells[x][y]
-        return Cell.alive;
-    }
+        return alive;
+    }*/
 }

@@ -1,9 +1,11 @@
-import java.util.Scanner;  // Import the Scanner class
-import java.awt.Color; //Import the Graphic Library for Color (Abstract Window Toolkit)
-import java.awt.Canvas; //Import the Graphic Library for Canvas (Abstract Window Toolkit)
-import java.awt.Graphics; //Import the Graphic Library for Graphics (Abstract Window Toolkit)
-import javax.swing.JFrame;//Import the Graphic Library for JFrame (Abstract Window Toolkit)
+import java.util.Scanner;  // the Scanner class
+import java.awt.Color; // the Graphic Library for Color (Abstract Window Toolkit)
+import java.awt.Canvas; // the Graphic Library for Canvas (Abstract Window Toolkit)
+import java.awt.Graphics; // the Graphic Library for Graphics (Abstract Window Toolkit)
+import javax.swing.JFrame;// the Graphic Library for JFrame (Abstract Window Toolkit)
 
+// why did you use a billion single line comments...
+// also why is all the code commented?
 // public class Drawing extends Canvas 
 // {
 //     Cell cells[]; //all cells
@@ -43,6 +45,7 @@ import javax.swing.JFrame;//Import the Graphic Library for JFrame (Abstract Wind
 //             }
 //         }
 //     }
+          // why is there a game function AND a game class???
 //     // private void Game()
 //     // {
 //     //     // while(true){
