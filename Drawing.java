@@ -1,118 +1,29 @@
-// import java.awt.Color; //Import the Graphic Library for Color (Abstract Window Toolkit)
-// import java.awt.Canvas; //Import the Graphic Library for Canvas (Abstract Window Toolkit)
-// import java.awt.Graphics; //Import the Graphic Library for Graphics (Abstract Window Toolkit)
-// import javax.swing.JFrame;//Import the Graphic Library for JFrame (Abstract Window Toolkit)
-
-
-// // public class Drawing extends Canvas {
-//     // public static void main(String[] args) {
-//     //     JFrame frame = new JFrame("My Drawing");
-//     //     Canvas canvas = new Drawing();
-//     //     canvas.setSize(Game.cell_row_num*10, Game.cell_row_num*10);
-//     //     canvas.setBackground(Color.green);
-//     //     // canvas.paint(g);
-//     //     frame.add(canvas);
-//     //     frame.pack();
-//     //     frame.setVisible(true);
-//     // }
-//     //sets the canvas
-// // }
-
-
-// class Drawing extends Canvas {
-//     public static int cell_row_num = 10;
-//     public static Cell cells[][] = new Cell[cell_row_num][cell_row_num];
-//     public static void main(String[] args) {
-//         JFrame frame = new JFrame("My Drawing");
-//         Canvas canvas = new Drawing();
-//         canvas.setSize(cell_row_num*10, cell_row_num*10);
-//         canvas.setBackground(Color.green);
-//         // canvas.paint(g);
-//         frame.add(canvas);
-//         frame.pack();
-//         frame.setVisible(true);
-//     }
-
-//     public static void Gen(){
-//         for(int column = 0; column < cell_row_num; column++){
-//             for(int row = 0; row < cell_row_num; row++){
-//                 // cells[column][row] = new Cell();
-//                 if(row == 5 || row == 7){
-//                     Drawing.cells[column][row] = new Cell(column,row,true);
-//                     // g.setColor(Color.white);
-//                     // g.fillRect(column * 10, row * 10, 10, 10);
-//                 }else{
-//                     Drawing.cells[column][row] = new Cell(column,row,false);
-//                     // g.setColor(Color.black);
-//                     // g.fillRect(column* 10, row * 10, 10, 10); 
-//                 }
-//             }
-//         }
-//     }
-//     public void paint(Graphics g){
-//         // Drawing.Gen();
-//         for(int column = 0; column < cell_row_num; column++){
-//             for(int row = 0; row < cell_row_num; row++){
-//                 // // cells[column][row] = new Cell();
-//                 // if(row == 5 || row == 7){
-//                 //     cells[column][row] = new Cell(column,row,true);
-//                 //     // g.setColor(Color.white);
-//                 //     g.fillRect(column * 10, row * 10, 10, 10);
-//                 // }else{
-//                 //     cells[column][row] = new Cell(column,row,false);
-//                 //     // g.setColor(Color.black);
-//                 //     g.fillRect(column* 10, row * 10, 10, 10); 
-//                 // }
-
-//                 if(Drawing.cells[column][row].alive){
-//                     g.setColor(Color.white);
-//                 }else{
-//                     g.setColor(Color.black);
-//                 }
-
-//                 // cells[0][0].returnVals();
-//                 System.out.println(cells[column][row].alive);
-//             }
-//         }
-        
-//         // System.out.println(cells[5][5].alive);
-//     //     for(int i=0; i < cell_row_num; i++) {
-//     //         for (int j = 0; j < cell_row_num; j++) {
-//     //             System.out.println(cells[i][j].alive);
-//     //             if(cells[i][j].alive){
-//     //             // if(i == 5){
-//     //                 // System.out.println(Game.cells[i][j].alive);
-//     //                 // alive
-//     //                 // System.out.println("WORKING");
-//                     // g.setColor(Color.white);
-//                     // g.fillRect(i * 10, j * 10, 10, 10);
-//     //                 // Game.cells[i][j].returnVals();
-//     //             // }
-//     //             }else{
-//                     // g.setColor(Color.black);
-//                     // g.fillRect(i * 10, j * 10, 10, 10);   
-//     //             }
-//     //         }
-//     //     }
-//     }
-// }
-
-
-
-
-
 import java.awt.Color; //Import the Graphic Library for Color (Abstract Window Toolkit)
 import java.awt.Canvas; //Import the Graphic Library for Canvas (Abstract Window Toolkit)
 import java.awt.Graphics; //Import the Graphic Library for Graphics (Abstract Window Toolkit)
+import java.awt.Component; //Import the Graphic Library for Components (Abstract Window Toolkit)
 import javax.swing.JFrame;//Import the Graphic Library for JFrame (Abstract Window Toolkit)
+import java.util.*;
+import java.io.*;
+// import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.util.Scanner;
+// import java.util.concurrent.TimeUnit;
+//https://web.stanford.edu/class/archive/cs/cs108/cs108.1092/handouts/27PaintRepaint.pdf
 
-class Drawing extends Canvas {
+// https://courses.cs.washington.edu/courses/cse341/98au/java/jdk1.2beta4/docs/api/java/awt/Canvas.html#paint(java.awt.Graphics)
+
+class Drawing extends Canvas 
+{
     //the grid size
-    public static int cell_row_num = 10;
+    public static int cell_row_num = 100;
     //all of the cells
     public static Cell cells[][] = new Cell[cell_row_num][cell_row_num];
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("My Drawing");
+    public static void main(String[] args) 
+    {
+        // Drawing.Gen();
+        JFrame frame = new JFrame("Game");
         Canvas canvas = new Drawing();
         canvas.setSize(cell_row_num*10, cell_row_num*10);
         canvas.setBackground(Color.green);
@@ -121,33 +32,399 @@ class Drawing extends Canvas {
         frame.setVisible(true);
     }
     //generating all of the cells
-    public static void Gen(){
-        for(int column = 0; column < cell_row_num; column++){
-            for(int row = 0; row < cell_row_num; row++){
+    public static void Gen()
+    {
+         System.out.println("Please input what cells you want to be alive.\nPlease use format: (cellx, celly) (cellx, celly)");
+         /*InputStreamReader isr = new InputStreamReader(System.in);
+         BufferedReader br = new BufferedReader(isr);
+         String input = br.readLine();*/
+         Scanner scanner = new Scanner(System.in);
+         String input;
+         input = scanner.nextLine();
+         //scanner.close();
+         String[] locations = input.split("\\) ");
+         for (int i = 0; i < locations.length; i++)
+         {
+             locations[i] = locations[i].substring(1, locations[i].length());
+         }
+         
+         ArrayList<String[]> actualLocations = new ArrayList<String[]>();
+         for(int yum = 0; yum < locations.length; yum++)
+         {
+             actualLocations.add(locations[yum].split(", "));
+         }
+         ArrayList<int[]> convertedLocations = new ArrayList<int[]>();
+         for(int bruh = 0; bruh < actualLocations.size(); bruh++)
+         {
+            int[] loc = new int[2];
+            loc[0] = Integer.valueOf(actualLocations.get(bruh)[0]);
+            if (bruh == actualLocations.size() - 1)
+            {
+                loc[1] = Integer.valueOf(actualLocations.get(bruh)[1].substring(0, actualLocations.get(bruh)[1].length()-1));
+            }
+            else
+            {
+                loc[1] = Integer.valueOf(actualLocations.get(bruh)[1]);
+            }
+            
+         }
+
+        
+        for(int column = 0; column < cell_row_num; column++)
+        {
+            for(int row = 0; row < cell_row_num; row++)
+            {
+                Drawing.cells[column][row] = new Cell(column,row,false);
                 //if the row is 5 or 7, the cell is true
-                if(row == 5 || row == 7){
-                    Drawing.cells[column][row] = new Cell(column,row,true);
-                }else{
-                    Drawing.cells[column][row] = new Cell(column,row,false);
+                // if(row == 5 && column == 7)
+                // {
+                //     Drawing.cells[column][row] = new Cell(column,row,true);
+                // }
+                // else
+                // {
+                //     Drawing.cells[column][row] = new Cell(column,row,false);
+                // }
+            }
+            for(int z = 0; z < convertedLocations.size(); z++)
+            {
+                Drawing.cells[convertedLocations.get(z)[0]][convertedLocations.get(z)[1]].alive = true;
+            }
+        }   
+    }
+    //will be run every second
+    public static void Game()
+    {
+        //columns go up and down while rows go side to side.
+        //DETERMINE CELL SURROUNDING VAL
+        //rows
+        for(int i = 0; i < cells.length; i++)
+        {
+            //collumns
+            for(int a = 0; 0 < cells[i].length; a++)
+            {
+                int surrounding = 0;
+
+                
+/********************************************
+*
+*
+********************************************/                
+                if (i == 0)
+                {
+                    if(a == 0) // top left
+                    {
+                        if(cells[i][a+1].alive == true)
+                        {
+                            surrounding += 1;
+                        }
+                        if(cells[i+1][a+1].alive == true)
+                        {
+                            surrounding += 1; 
+                        }
+                        if(cells[i+1][a].alive == true)
+                        {
+                            surrounding += 1;
+                        }
+                    }
+                    else if (a == cells[i].length - 1) // top right
+                    {
+                        if(cells[i][a-1].alive == true)
+                        {
+                            surrounding += 1;
+                        }
+                        if(cells[i-1][a-1].alive == true)
+                        {
+                            surrounding += 1;
+                        }
+                        if(cells[i-1][a].alive == true)
+                        {
+                             surrounding += 1;
+                        }
+                    }
+                    else // top middle 
+                    {
+                        if(cells[i][a].alive == true)
+                        {
+                            surrounding += 1;
+                        }
+                        if(cells[i+1][a].alive == true)
+                        {
+                            surrounding += 1; 
+                        }
+                        if(cells[i-1][a].alive == true)
+                        {
+                            surrounding += 1; 
+                        }
+                        if(cells[i-1][a+1].alive == true)
+                        {
+                             surrounding += 1;
+                        }
+                        if(cells[i+1][a+1].alive == true)
+                        {
+                            surrounding += 1;
+                        }
+                        if(cells[i][a+1].alive == true)
+                        {
+                            surrounding += 1;
+                        }
+                    }
+                }
+                else if (i == cells.length - 1)
+                {
+                    if(a == 0) // bottom left
+                    {
+                        if(cells[i][a+1].alive == true)
+                        {
+                            surrounding += 1;
+                        }
+                        if(cells[i-1][a+1].alive == true)
+                        {
+                            surrounding += 1;
+                        }
+                        if(cells[i-1][a].alive == true)
+                        {
+                            surrounding += 1;
+                        }
+                    }
+                    else if (a == cells[i].length - 1) // bottom right
+                    {
+                        if(cells[i][a-1].alive == true)
+                        {
+                            surrounding += 1;
+                        }
+                        if(cells[i-1][a-1].alive == true)
+                        {
+                            surrounding += 1; 
+                        }
+                        if(cells[i-1][a].alive == true)
+                        {
+                             surrounding += 1;
+                        }
+                    }
+                    else // bottom middle 
+                    {
+                        if(cells[i][a+1].alive == true)
+                        {
+                            surrounding += 1;
+                        }
+                        if(cells[i+1][a+1].alive == true)
+                        {
+                            surrounding += 1; 
+                        }
+                        if(cells[i-1][a+1].alive == true)
+                        {
+                            surrounding += 1; 
+                        }
+                        if(cells[i-1][a].alive == true)
+                        {
+                             surrounding += 1;
+                        }
+                        if(cells[i+1][a].alive == true)
+                        {
+                            surrounding += 1;
+                        }
+                    }
+                }
+                else if (a == 0) // left middle 
+                {
+                    if(cells[i][a+1].alive == true)
+                    {
+                        surrounding += 1;
+                    }
+                    if(cells[i+1][a+1].alive == true)
+                    {
+                        surrounding += 1; 
+                    }
+                    if(cells[i][a-1].alive == true)
+                    {
+                        surrounding += 1;
+                    }
+                    if(cells[i+1][a-1].alive == true)
+                    {
+                      surrounding += 1;
+                    }
+                    if(cells[i+1][a].alive == true)
+                    {
+                        surrounding += 1;
+                    }
+                }
+                else if (a == cells[i].length - 1) // right middle 
+                {
+                    if(cells[i][a+1].alive == true)
+                    {
+                        surrounding += 1;
+                    }
+                    if(cells[i-1][a+1].alive == true)
+                    {
+                        surrounding += 1; 
+                    }
+                    if(cells[i][a-1].alive == true)
+                    {
+                        surrounding += 1;
+                    }
+                    if(cells[i-1][a-1].alive == true)
+                    {
+                        surrounding += 1;
+                    }
+                    if(cells[i-1][a].alive == true)
+                    {
+                         surrounding += 1;
+                    }
+                }
+                else
+                {
+                    if(cells[i][a+1].alive == true)
+                    {
+                        surrounding += 1;
+                    }
+                    if(cells[i+1][a+1].alive == true)
+                    {
+                        surrounding += 1; 
+                    }
+                    if(cells[i-1][a+1].alive == true)
+                    {
+                        surrounding += 1; 
+                    }
+                    if(cells[i][a-1].alive == true)
+                    {
+                        surrounding += 1;
+                    }
+                    if(cells[i+1][a-1].alive == true)
+                    {
+                      surrounding += 1;
+                    }
+                    if(cells[i-1][a-1].alive == true)
+                    {
+                        surrounding += 1;
+                    }
+                    if(cells[i-1][a].alive == true)
+                    {
+                         surrounding += 1;
+                    }
+                    if(cells[i+1][a].alive == true)
+                    {
+                        surrounding += 1;
+                    }
+                }
+                Drawing.cells[i][a].surrounding = surrounding;
+            }
+        }
+    //PURGATORY
+        //rows
+        for(int i = 0; i < cells.length; i++)
+        {
+            //collumns
+            for(int a = 0; 0 < cells[i].length; a++){
+                //RULE 1: Any live cell with fewer than two live neighbours dies, as if by underpopulation.
+                if(Drawing.cells[i][a].surrounding < 2)
+                {
+                    //DANTE'S HELL
+                    Drawing.cells[i][a].killSwitch();
+                }
+                //RULE 2: Any live cell with two or three live neighbours lives on to the next generation.
+                if (Drawing.cells[i][a].alive == true)
+                {
+                    if (Drawing.cells[i][a].surrounding < 4 && Drawing.cells[i][a].surrounding > 1)
+                    {
+                        //PARADISO
+                        Drawing.cells[i][a].reviveSwitch();
+                    }
+                }
+                //RULE 3: Any live cell with more than three live neighbours dies, as if by overpopulation.
+                if (Drawing.cells[i][a].surrounding > 3)
+                {
+                    //DANTE'S HELL
+                    Drawing.cells[i][a].killSwitch();
+                }
+                //RULE 4: Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+                if(Drawing.cells[i][a].surrounding == 3)
+                {
+                    Drawing.cells[i][a].reviveSwitch();
                 }
             }
         }
     }
+
     //for painting to the canvas
     public void paint(Graphics g){
         Drawing.Gen();
-        for(int column = 0; column < cell_row_num; column++){
-            for(int row = 0; row < cell_row_num; row++){
-                //if the cell is true, make the rect white
-                if(Drawing.cells[column][row].alive){
-                    g.setColor(Color.white);
-                    g.fillRect(column * 10, row * 10, 10, 10);
-                }else{
-                    g.setColor(Color.black);
-                    g.fillRect(column * 10, row * 10, 10, 10);
+        // while(true){
+            //https://stackoverflow.com/questions/24104313/how-do-i-make-a-delay-in-java
+            Long second = 1L;
+            //TimeUnit.SECONDS.sleep(second);
+            // Drawing.Game();
+            for(int column = 0; column < cell_row_num; column++){
+                for(int row = 0; row < cell_row_num; row++){
+                    //if the cell is true, make the rect white
+                    if(Drawing.cells[row][column].alive){
+                        g.setColor(Color.white);
+                        g.fillRect(row * 10, column * 10, 10, 10);
+                    }else{
+                        g.setColor(Color.black);
+                        g.fillRect(row * 10, column * 10, 10, 10);
+                    }
+                    // System.out.println(cells[column][row].alive);
                 }
-                System.out.println(cells[column][row].alive);
             }
+            repaint();
+        // }
+    }
+    public void update(Graphics g)
+    {
+        Drawing.Game();
+        for(int column = 0; column < cell_row_num; column++)
+        {
+            for(int row = 0; row < cell_row_num; row++)
+            {
+                //if the cell is true, make the rect white
+                if(Drawing.cells[row][column].alive)
+                {
+                    g.setColor(Color.white);
+                    g.fillRect(row * 10, column * 10, 10, 10);
+                }
+                else
+                {
+                    g.setColor(Color.black);
+                    g.fillRect(row * 10, column * 10, 10, 10);
+                }
+             }
+        }
+        // repaint();
+    }
+
+
+}
+
+
+class Cell 
+{
+    // these variables were originally static, which would have definitely broke the code
+    public int ypos;
+    public int xpos;
+    public boolean alive;
+    public int surrounding;
+    Cell(int x, int y, boolean living)
+    {
+        this.ypos = y;
+        this.xpos = x;
+        this.alive = living;
+        this.surrounding = 0;
+    }
+    public void returnVals() 
+    {
+        if(alive == true)
+        {
+            System.out.println("Cell at (" + xpos + ", " + ypos + ") is alive.\n");
+        }
+        else
+        {
+            System.out.println("Cell at (" + xpos + ", " + ypos + ") is dead.\n");
         }
     }
-}
+    public void killSwitch(){
+        this.alive = false;
+    }
+    public void reviveSwitch(){
+        this.alive = true;
+    }
+}  

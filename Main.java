@@ -1,169 +1,249 @@
-import java.util.Scanner;  // the Scanner class
-import java.awt.Color; // the Graphic Library for Color (Abstract Window Toolkit)
-import java.awt.Canvas; // the Graphic Library for Canvas (Abstract Window Toolkit)
-import java.awt.Graphics; // the Graphic Library for Graphics (Abstract Window Toolkit)
-import javax.swing.JFrame;// the Graphic Library for JFrame (Abstract Window Toolkit)
+import java.awt.Color; //Import the Graphic Library for Color (Abstract Window Toolkit)
+import java.awt.Canvas; //Import the Graphic Library for Canvas (Abstract Window Toolkit)
+import java.awt.Graphics; //Import the Graphic Library for Graphics (Abstract Window Toolkit)
+import java.awt.Component; //Import the Graphic Library for Components (Abstract Window Toolkit)
+import javax.swing.JFrame;//Import the Graphic Library for JFrame (Abstract Window Toolkit)
+import java.util.*;
+import java.io.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.util.Scanner;
+// import java.util.concurrent.TimeUnit;
+//https://web.stanford.edu/class/archive/cs/cs108/cs108.1092/handouts/27PaintRepaint.pdf
 
-// why did you use a billion single line comments...
-// also why is all the code commented?
-// public class Drawing extends Canvas 
-// {
-//     Cell cells[]; //all cells
-//     int[][] toKill; //kill list 
-//     int[][] toRez; //revive list
-//     Cell[][] aliveCells; // all cells that are alive  
-//     int gridNum = 50; //number of cells in xpos or ypos
-//     //GAME LOGIC
-//     // public static void main(String []args)
-//     // {
-//     // }
-//     public static void main(String[] args) {
-//         // JFrame frame = new JFrame("My Drawing");
-//         // Canvas canvas = new Drawing();
-//         // canvas.setSize(470, 470);
-//         // canvas.setBackground(Color.black);
-//         // frame.add(canvas);
-//         // frame.pack();
-//         // frame.setVisible(true);
-//         Drawing.init()
+// https://courses.cs.washington.edu/courses/cse341/98au/java/jdk1.2beta4/docs/api/java/awt/Canvas.html#paint(java.awt.Graphics)
+
+class Main extends Canvas 
+{
+    //the grid size
+    public static int cell_row_num = 100;
+    //all of the cells
+    public static Cell cells[][] = new Cell[cell_row_num][cell_row_num];
+    public static void main(String[] args) 
+    {
+        // Drawing.Gen();
+        JFrame frame = new JFrame("Game");
+        Canvas canvas = new Drawing();
+        canvas.setSize(cell_row_num*10, cell_row_num*10);
+        canvas.setBackground(Color.green);
+        frame.add(canvas);
+        frame.pack();
+        frame.setVisible(true);
+    }
+    //generating all of the cells
+    public static void Gen()
+    {
+        //  System.out.println("Please input what cells you want to be alive.\nPlease use format: (cellx, celly) (cellx, celly)");
+        //  /*InputStreamReader isr = new InputStreamReader(System.in);
+        //  BufferedReader br = new BufferedReader(isr);
+        //  String input = br.readLine();*/
+        //  Scanner scanner = new Scanner(System.in);
+        //  String input;
+        //  input = scanner.nextLine();
+        //  //scanner.close();
+        //  String[] locations = input.split("\\) ");
+        //  for (int i = 0; i < locations.length; i++)
+        //  {
+        //      locations[i] = locations[i].substring(1, locations[i].length());
+        //  }
+         
+        //  ArrayList<String[]> actualLocations = new ArrayList<String[]>();
+        //  for(int yum = 0; yum < locations.length; yum++)
+        //  {
+        //      actualLocations.add(locations[yum].split(", "));
+        //  }
+        //  ArrayList<int[]> convertedLocations = new ArrayList<int[]>();
+        //  for(int bruh = 0; bruh < actualLocations.size(); bruh++)
+        //  {
+        //     int[] loc = new int[2];
+        //     loc[0] = Integer.valueOf(actualLocations.get(bruh)[0]);
+        //     loc[1] = Integer.valueOf(actualLocations.get(bruh)[1]);
+        //  }
+
+        
+        for(int column = 0; column < cell_row_num; column++)
+        {
+            for(int row = 0; row < cell_row_num; row++)
+            {
+                Drawing.cells[column][row] = new Cell(column,row,false);
+                //if the row is 5 or 7, the cell is true
+                if(row == 5 && column == 7)
+                {
+                    Drawing.cells[column][row] = new Cell(column,row,true);
+                }
+                else
+                {
+                    Drawing.cells[column][row] = new Cell(column,row,false);
+                }
+            }
+            // for(int z = 0; z < convertedLocations.size(); z++)
+            // {
+            //     Drawing.cells[convertedLocations.get(z)[0]][convertedLocations.get(z)[1]].alive = true;
+            // }
+        }   
+    }
+    //will be run every second
+    public static void Game()
+    {
+        //columns go up and down while rows go side to side.
+        //DETERMINE CELL SURROUNDING VAL
+        //rows
+        for(int i = 0; i < cells.length; i++)
+        {
+            //collumns
+            for(int a = 0; 0 < cells[i].length; a++)
+            {
+                int surrounding = 0;
+                if(cells[i][a+1].alive == true)
+                {
+                    surrounding += 1;
+                }
+                if(cells[i+1][a+1].alive == true)
+                {
+                    surrounding += 1; 
+                }
+                if(cells[i-1][a+1].alive == true)
+                {
+                    surrounding += 1;
+                }
+                if(cells[i][a-1].alive == true)
+                {
+                    surrounding += 1;
+                }
+                if(cells[i+1][a-1].alive == true)
+                {
+                    surrounding += 1;
+                }
+                if(cells[i-1][a-1].alive == true)
+                {
+                    surrounding += 1;
+                }
+                if(cells[i-1][a].alive == true)
+                {
+                    surrounding += 1;
+                }if(cells[i+1][a].alive == true)
+                {
+                    surrounding += 1;
+                }
+                Drawing.cells[i][a].surrounding = surrounding;
+            }
+        }
+    //PURGATORY
+        //rows
+        for(int i = 0; i < cells.length; i++)
+        {
+            //collumns
+            for(int a = 0; 0 < cells[i].length; a++){
+                //RULE 1: Any live cell with fewer than two live neighbours dies, as if by underpopulation.
+                if(Drawing.cells[i][a].surrounding < 2)
+                {
+                    //DANTE'S HELL
+                    Drawing.cells[i][a].killSwitch();
+                }
+                //RULE 2: Any live cell with two or three live neighbours lives on to the next generation.
+                if (Drawing.cells[i][a].alive == true)
+                {
+                    if (Drawing.cells[i][a].surrounding < 4 && Drawing.cells[i][a].surrounding > 1)
+                    {
+                        //PARADISO
+                        Drawing.cells[i][a].reviveSwitch();
+                    }
+                }
+                //RULE 3: Any live cell with more than three live neighbours dies, as if by overpopulation.
+                if (Drawing.cells[i][a].surrounding > 3)
+                {
+                    //DANTE'S HELL
+                    Drawing.cells[i][a].killSwitch();
+                }
+                //RULE 4: Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+                if(Drawing.cells[i][a].surrounding == 3)
+                {
+                    Drawing.cells[i][a].reviveSwitch();
+                }
+            }
+        }
+    }
+
+    //for painting to the canvas
+    public void paint(Graphics g){
+        Drawing.Gen();
+        // while(true){
+            //https://stackoverflow.com/questions/24104313/how-do-i-make-a-delay-in-java
+            Long second = 1L;
+            //TimeUnit.SECONDS.sleep(second);
+            // Drawing.Game();
+            for(int column = 0; column < cell_row_num; column++){
+                for(int row = 0; row < cell_row_num; row++){
+                    //if the cell is true, make the rect white
+                    if(Drawing.cells[column][row].alive){
+                        g.setColor(Color.white);
+                        g.fillRect(column * 10, row * 10, 10, 10);
+                    }else{
+                        g.setColor(Color.black);
+                        g.fillRect(column * 10, row * 10, 10, 10);
+                    }
+                    // System.out.println(cells[column][row].alive);
+                }
+            }
+            repaint();
+        // }
+    }
+    public void update(Graphics g)
+    {
+        Drawing.Game();
+        for(int column = 0; column < cell_row_num; column++)
+        {
+            for(int row = 0; row < cell_row_num; row++)
+            {
+                //if the cell is true, make the rect white
+                if(Drawing.cells[column][row].alive)
+                {
+                    g.setColor(Color.white);
+                    g.fillRect(column * 10, row * 10, 10, 10);
+                }
+                else
+                {
+                    g.setColor(Color.black);
+                    g.fillRect(column * 10, row * 10, 10, 10);
+                }
+             }
+        }
+        repaint();
+    }
 
 
-
-//     }
-
-
-//     private void init(){
-//         //create the cells
-//         for (int rows = 0; row < gridNum; rows++)
-//         {
-//             // Object [] row_of_cells;
-//             for (int columns = 0; column < gridNum; columns++)
-//             {
-//                 // int [] positions= new 
-//                 cells = new Cell([row][column]);
-//                 // row_of_cells.add(new Cell([row, column]));
-//             }
-//         }
-//     }
-          // why is there a game function AND a game class???
-//     // private void Game()
-//     // {
-//     //     // while(true){
-//     //         // check which cells are alive
-//     //         for(xpos = 0; xpos < gridNum; xpos++) // for each cell
-//     //         {
-//     //             for(ypos = 0; ypos < gridNum; ypos++) // for each cell
-//     //             {
-//     //                 int surrounding; // how many cells are surrounding
-//     //                 if (cells[xpos][ypos].alive == true) // if the cell is alive
-//     //                 {
-//     //                     //see if it is on edge or not
-                        
-//     //                     int surroundingLive; //cell surrounding num
-//     //                     //where no difference in xpos
-//     //                     if(cells[xpos][ypos + 1].alive == true){
-
-//     //                     }
-//     //                     if(cells[xpos][ypos - 1].alive == true){
-
-//     //                     }
-//     //                     //where +1 in xpos
-//     //                     if(cells[xpos + 1][ypos + 1].alive == true){
-
-//     //                     }
-//     //                     if(cells[xpos + 1][ypos - 1].alive == true){
-
-//     //                     }
-//     //                     if(cells[xpos + 1][ypos].alive == true){
-
-//     //                     }
-//     //                     //where -1 in xpos
-//     //                     if(cells[xpos - 1][ypos + 1].alive == true){
-
-//     //                     }
-//     //                     if(cells[xpos - 1][ypos].alive == true){
-
-//     //                     }
-//     //                     if(cells[xpos - 1][ypos - 1].alive == true){
-
-//     //                     }
-                        
-//     //                     // for(i = 0; i < cells.length; i++)
-//     //                     // {
-//     //                     //     if ((aliveCells[i].cell_position[0] == cells[cell].cell_position[0] + 1) || (aliveCells[i].cell_position[0] == cells[cell].cell_position[0] - 1))
-//     //                     //     {
-//     //                     //         if ((aliveCells[i].cell_position[1] == cells[cell].cell_position[1] + 1) || (aliveCells[i].cell_position[1] == cells[cell].cell_position[1] - 1))
-//     //                     //         {
-//     //                     //             surrounding++;
-//     //                     //         }
-//     //                     //     }
-//     //                     // }
-//     //                     // if (surrounding < 2)
-//     //                     // {
-//     //                     //     toKill.add(cell);
-//     //                     // }
-//     //                     // else if (surrounding > 3)
-//     //                     // {
-//     //                     //     toKill.add(cell);
-//     //                     // }
-//     //                 }
-//     //                 else
-//     //                 {
-//     //                     for(i = 0; i < cells.length; i++)
-//     //                     {
-//     //                         if ((aliveCells[i].cell_position[0] == cells[cell].cell_position[0] + 1) || (aliveCells[i].cell_position[0] == cells[cell].cell_position[0] - 1))
-//     //                         {
-//     //                             if ((aliveCells[i].cell_position[1] == cells[cell].cell_position[1] + 1) || (aliveCells[i].cell_position[1] == cells[cell].cell_position[1] - 1))
-//     //                             {
-//     //                                 surrounding++;
-//     //                             }
-//     //                         }
-//     //                     }
-//     //                     if (surrounding == 3)
-//     //                     {
-//     //                         toRez.add(cell);
-//     //                     }
-//     //                 }
-//     //             }
-//     //         }
-//     //         for (int z = 0; z < toKill.length; z ++)
-//     //         {
-//     //             Cells[toKill[z]].alive = false;
-//     //         }
-//     //         for (int z = 0; z < toRez.length; z ++)
-//     //         {
-//     //             Cells[toRez[z]].alive = true;
-//     //         }
-//     //     }
-//     //GRAPHICS STUFF
+}
 
 
-
-// }
-
-//Code for the game
-// public class Game{
-//     public static void main(String[] args) {
-
-//     }
-// }
-
-// Graphics code
-
-
-// Code for the individual cell clss
-
-
-
-
-
-
-
-
-
-/*
- Any live cell with fewer than two live neighbours dies, as if by underpopulation.
- Any live cell with two or three live neighbours lives on to the next generation.
- Any live cell with more than three live neighbours dies, as if by overpopulation.
- Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction. 
- */
+class Cell 
+{
+    // these variables were originally static, which would have definitely broke the code
+    public int ypos;
+    public int xpos;
+    public boolean alive;
+    public int surrounding;
+    Cell(int x, int y, boolean living)
+    {
+        this.ypos = y;
+        this.xpos = x;
+        this.alive = living;
+        this.surrounding = 0;
+    }
+    public void returnVals() 
+    {
+        if(alive == true)
+        {
+            System.out.println("Cell at (" + xpos + ", " + ypos + ") is alive.\n");
+        }
+        else
+        {
+            System.out.println("Cell at (" + xpos + ", " + ypos + ") is dead.\n");
+        }
+    }
+    public void killSwitch(){
+        this.alive = false;
+    }
+    public void reviveSwitch(){
+        this.alive = true;
+    }
+}  
