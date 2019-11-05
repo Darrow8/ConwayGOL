@@ -1,13 +1,13 @@
 import java.awt.Color; //Import the Graphic Library for Color (Abstract Window Toolkit)
 import java.awt.Canvas; //Import the Graphic Library for Canvas (Abstract Window Toolkit)
 import java.awt.Graphics; //Import the Graphic Library for Graphics (Abstract Window Toolkit)
-import java.awt.Component; //Import the Graphic Library for Components (Abstract Window Toolkit)
+//import java.awt.Component; //Import the Graphic Library for Components (Abstract Window Toolkit)
 import javax.swing.JFrame;//Import the Graphic Library for JFrame (Abstract Window Toolkit)
 import java.util.*;
-import java.io.*;
+//import java.io.*;
 // import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+//import java.awt.event.*;
+//import javax.swing.*;
 import java.util.Scanner;
 // import java.util.concurrent.TimeUnit;
 //https://web.stanford.edu/class/archive/cs/cs108/cs108.1092/handouts/27PaintRepaint.pdf
@@ -41,7 +41,7 @@ class Drawing extends Canvas
          Scanner scanner = new Scanner(System.in);
          String input;
          input = scanner.nextLine();
-         //scanner.close();
+         scanner.close();
          String[] locations = input.split("\\) ");
          for (int i = 0; i < locations.length; i++)
          {
@@ -88,6 +88,8 @@ class Drawing extends Canvas
             for(int z = 0; z < convertedLocations.size(); z++)
             {
                 Drawing.cells[convertedLocations.get(z)[0]][convertedLocations.get(z)[1]].alive = true;
+                System.out.println("Hi");
+                Drawing.cells[convertedLocations.get(z)[0]][convertedLocations.get(z)[1]].returnVals();
             }
         }   
     }
@@ -97,23 +99,19 @@ class Drawing extends Canvas
         //columns go up and down while rows go side to side.
         //DETERMINE CELL SURROUNDING VAL
         //rows
+        System.out.println(cells.length);
         for(int i = 0; i < cells.length; i++)
         {
             //collumns
             for(int a = 0; 0 < cells[i].length; a++)
             {
                 int surrounding = 0;
-
-                
-/********************************************
-*
-*
-********************************************/                
+                            
                 if (i == 0)
                 {
-                    if(a == 0) // top left
+                    if(a == 0) // left top
                     {
-                        if(cells[i][a+1].alive == true)
+                        if(cells[i+1][a].alive == true)
                         {
                             surrounding += 1;
                         }
@@ -121,45 +119,41 @@ class Drawing extends Canvas
                         {
                             surrounding += 1; 
                         }
-                        if(cells[i+1][a].alive == true)
+                        if(cells[i][a+1].alive == true)
                         {
                             surrounding += 1;
                         }
                     }
-                    else if (a == cells[i].length - 1) // top right
+                    else if (a == cells[i].length - 1) // left bottom
                     {
                         if(cells[i][a-1].alive == true)
                         {
                             surrounding += 1;
                         }
-                        if(cells[i-1][a-1].alive == true)
-                        {
-                            surrounding += 1;
-                        }
-                        if(cells[i-1][a].alive == true)
-                        {
-                             surrounding += 1;
-                        }
-                    }
-                    else // top middle 
-                    {
-                        if(cells[i][a].alive == true)
+                        if(cells[i+1][a-1].alive == true)
                         {
                             surrounding += 1;
                         }
                         if(cells[i+1][a].alive == true)
                         {
-                            surrounding += 1; 
+                             surrounding += 1;
                         }
-                        if(cells[i-1][a].alive == true)
+                    }
+                    else // left middle 
+                    {
+                        if(cells[i+1][a].alive == true)
                         {
                             surrounding += 1; 
                         }
-                        if(cells[i-1][a+1].alive == true)
+                        if(cells[i+1][a+1].alive == true)
+                        {
+                            surrounding += 1; 
+                        }
+                        if(cells[i][a-1].alive == true)
                         {
                              surrounding += 1;
                         }
-                        if(cells[i+1][a+1].alive == true)
+                        if(cells[i+1][a-1].alive == true)
                         {
                             surrounding += 1;
                         }
@@ -171,13 +165,13 @@ class Drawing extends Canvas
                 }
                 else if (i == cells.length - 1)
                 {
-                    if(a == 0) // bottom left
+                    if(a == 0) // right top
                     {
-                        if(cells[i][a+1].alive == true)
+                        if(cells[i][a-1].alive == true)
                         {
                             surrounding += 1;
                         }
-                        if(cells[i-1][a+1].alive == true)
+                        if(cells[i-1][a-1].alive == true)
                         {
                             surrounding += 1;
                         }
@@ -186,11 +180,30 @@ class Drawing extends Canvas
                             surrounding += 1;
                         }
                     }
-                    else if (a == cells[i].length - 1) // bottom right
+                    else if (a == cells[i].length - 1) // right bottom
                     {
-                        if(cells[i][a-1].alive == true)
+                        if(cells[i][a+1].alive == true)
                         {
                             surrounding += 1;
+                        }
+                        if(cells[i-1][a+1].alive == true)
+                        {
+                            surrounding += 1; 
+                        }
+                        if(cells[i-1][a].alive == true)
+                        {
+                             surrounding += 1;
+                        }
+                    }
+                    else // right middle 
+                    {
+                        if(cells[i][a+1].alive == true)
+                        {
+                            surrounding += 1;
+                        }
+                        if(cells[i-1][a+1].alive == true)
+                        {
+                            surrounding += 1; 
                         }
                         if(cells[i-1][a-1].alive == true)
                         {
@@ -200,46 +213,27 @@ class Drawing extends Canvas
                         {
                              surrounding += 1;
                         }
-                    }
-                    else // bottom middle 
-                    {
-                        if(cells[i][a+1].alive == true)
-                        {
-                            surrounding += 1;
-                        }
-                        if(cells[i+1][a+1].alive == true)
-                        {
-                            surrounding += 1; 
-                        }
-                        if(cells[i-1][a+1].alive == true)
-                        {
-                            surrounding += 1; 
-                        }
-                        if(cells[i-1][a].alive == true)
-                        {
-                             surrounding += 1;
-                        }
-                        if(cells[i+1][a].alive == true)
+                        if(cells[i][a-1].alive == true)
                         {
                             surrounding += 1;
                         }
                     }
                 }
-                else if (a == 0) // left middle 
+                else if (a == 0) // top middle 
                 {
-                    if(cells[i][a+1].alive == true)
-                    {
-                        surrounding += 1;
-                    }
-                    if(cells[i+1][a+1].alive == true)
-                    {
-                        surrounding += 1; 
-                    }
                     if(cells[i][a-1].alive == true)
                     {
                         surrounding += 1;
                     }
                     if(cells[i+1][a-1].alive == true)
+                    {
+                        surrounding += 1; 
+                    }
+                    if(cells[i-1][a-1].alive == true)
+                    {
+                        surrounding += 1;
+                    }
+                    if(cells[i-1][a].alive == true)
                     {
                       surrounding += 1;
                     }
@@ -248,7 +242,7 @@ class Drawing extends Canvas
                         surrounding += 1;
                     }
                 }
-                else if (a == cells[i].length - 1) // right middle 
+                else if (a == cells[i].length - 1) // bottom middle 
                 {
                     if(cells[i][a+1].alive == true)
                     {
@@ -258,20 +252,20 @@ class Drawing extends Canvas
                     {
                         surrounding += 1; 
                     }
-                    if(cells[i][a-1].alive == true)
-                    {
-                        surrounding += 1;
-                    }
-                    if(cells[i-1][a-1].alive == true)
+                    if(cells[i+1][a].alive == true)
                     {
                         surrounding += 1;
                     }
                     if(cells[i-1][a].alive == true)
                     {
+                        surrounding += 1;
+                    }
+                    if(cells[i+1][a+1].alive == true)
+                    {
                          surrounding += 1;
                     }
                 }
-                else
+                else // middle
                 {
                     if(cells[i][a+1].alive == true)
                     {
@@ -324,7 +318,7 @@ class Drawing extends Canvas
                 //RULE 2: Any live cell with two or three live neighbours lives on to the next generation.
                 if (Drawing.cells[i][a].alive == true)
                 {
-                    if (Drawing.cells[i][a].surrounding < 4 && Drawing.cells[i][a].surrounding > 1)
+                    if ((Drawing.cells[i][a].surrounding < 4) && (Drawing.cells[i][a].surrounding > 1))
                     {
                         //PARADISO
                         Drawing.cells[i][a].reviveSwitch();
@@ -350,31 +344,36 @@ class Drawing extends Canvas
         Drawing.Gen();
         // while(true){
             //https://stackoverflow.com/questions/24104313/how-do-i-make-a-delay-in-java
-            Long second = 1L;
+            //Long second = 1L;
             //TimeUnit.SECONDS.sleep(second);
             // Drawing.Game();
-            for(int column = 0; column < cell_row_num; column++){
-                for(int row = 0; row < cell_row_num; row++){
-                    //if the cell is true, make the rect white
-                    if(Drawing.cells[row][column].alive){
-                        g.setColor(Color.white);
-                        g.fillRect(row * 10, column * 10, 10, 10);
-                    }else{
-                        g.setColor(Color.black);
-                        g.fillRect(row * 10, column * 10, 10, 10);
-                    }
-                    // System.out.println(cells[column][row].alive);
+        for(int row = 0; row < cell_row_num; row++)
+        {
+            for(int column = 0; column < cell_row_num; column++)
+            {
+                //if the cell is true, make the rect white
+                if(Drawing.cells[row][column].alive)
+                {
+                    g.setColor(Color.white);
+                    g.fillRect(row * 10, column * 10, 10, 10);
                 }
+                else
+                {
+                    g.setColor(Color.black);
+                    g.fillRect(row * 10, column * 10, 10, 10);
+                }
+                    // System.out.println(cells[column][row].alive);
             }
-            repaint();
+        }
+        repaint();
         // }
     }
     public void update(Graphics g)
     {
         Drawing.Game();
-        for(int column = 0; column < cell_row_num; column++)
+        for(int row = 0; row < cell_row_num; row++)
         {
-            for(int row = 0; row < cell_row_num; row++)
+            for(int column = 0; column < cell_row_num; column++)
             {
                 //if the cell is true, make the rect white
                 if(Drawing.cells[row][column].alive)
