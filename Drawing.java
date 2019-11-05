@@ -41,43 +41,42 @@ class Drawing extends Canvas
          Scanner scanner = new Scanner(System.in);
          String input;
          input = scanner.nextLine();
-         System.out.println(input);
          scanner.close();
          String[] locations = input.split("\\) ");
-         System.out.println(locations);
          for (int i = 0; i < locations.length; i++)
          {
              locations[i] = locations[i].substring(1, locations[i].length());
          }
-         System.out.println(locations);   
          ArrayList<String[]> actualLocations = new ArrayList<String[]>();
          for (int yum = 0; yum < locations.length; yum++)
          {
-             actualLocations.add(locations[yum].split(", "));
+             if (yum == locations.length - 1)
+             {
+                String[] arr = locations[yum].split(", ");
+                arr[arr.length-1] = arr[arr.length-1].substring(0, arr[arr.length-1].length()-1);
+                actualLocations.add(arr);
+             }
+             else
+             {
+                actualLocations.add(locations[yum].split(", "));
+             }
          }
-         System.out.println(actualLocations);
          ArrayList<int[]> convertedLocations = new ArrayList<int[]>();
          for (int bruh = 0; bruh < actualLocations.size(); bruh++)
          {
             int[] loc = new int[2];
             loc[0] = Integer.valueOf(actualLocations.get(bruh)[0]);
-            if (bruh == actualLocations.size() - 1)
-            {
-                loc[1] = Integer.valueOf(actualLocations.get(bruh)[1].substring(0, actualLocations.get(bruh)[1].length()-1));
-            }
-            else
-            {
-                loc[1] = Integer.valueOf(actualLocations.get(bruh)[1]);
-            }
+            loc[1] = Integer.valueOf(actualLocations.get(bruh)[1]);
+            convertedLocations.add(loc);
          }
          System.out.print(convertedLocations);
 
         
-        for (int column = 0; column < cell_row_num; column++)
+        for (int row = 0; row < cell_row_num; row++)
         {
-            for (int row = 0; row < cell_row_num; row++)
+            for (int column = 0; column < cell_row_num; column++)
             {
-                Drawing.cells[column][row] = new Cell(column,row,false);
+                Drawing.cells[row][column] = new Cell(row, column, false);
                 //if the row is 5 or 7, the cell is true
                 // if(row == 5 && column == 7)
                 // {
@@ -90,9 +89,7 @@ class Drawing extends Canvas
             }
             for (int z = 0; z < convertedLocations.size(); z++)
             {
-                Drawing.cells[convertedLocations.get(z)[0]][convertedLocations.get(z)[1]].alive = true;
-                System.out.println("Hi");
-                Drawing.cells[convertedLocations.get(z)[0]][convertedLocations.get(z)[1]].returnVals();
+                Drawing.cells[convertedLocations.get(z)[0]][convertedLocations.get(z)[1]] = new Cell(convertedLocations.get(z)[0], convertedLocations.get(z)[1], true);
             }
         }   
     }
@@ -314,10 +311,6 @@ class Drawing extends Canvas
             //collumns
             for (int a = 0; a < cells[i].length; a++)
             {
-                if (Drawing.cells[i][a].alive == true)
-                {
-                    System.out.println("I'm alive");
-                }
                 //RULE 1: Any live cell with fewer than two live neighbours dies, as if by underpopulation.
                 if (Drawing.cells[i][a].surrounding < 2)
                 {
