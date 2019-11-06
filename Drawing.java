@@ -124,13 +124,12 @@ class Drawing extends Canvas implements MouseListener, MouseMotionListener
         boolean input_toggle = true; // if true, you draw, if false, you input with the console
         while (!chosen)
         {
-            choice = "c";
-            if (choice == "c")
+            if (choice.equals("c"))
             {
                 input_toggle = false;
                 chosen = true;
             }
-            else if (choice == "d")
+            else if (choice.equals("d"))
             {
                 input_toggle = true;
                 chosen = true;
