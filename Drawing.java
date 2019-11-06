@@ -521,12 +521,6 @@ class Drawing extends Canvas implements MouseListener, MouseMotionListener
         }
         return surrounding; 
     }
-
-    @Override
-    public void mouseDragged(MouseEvent arg0) 
-    {
-        // TODO Auto-generated method stub
-    }
 }
 
 class Cell 
