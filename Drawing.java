@@ -35,7 +35,7 @@ import javax.swing.JTextArea;
 // (2, 6) (2, 7) (3, 6) (3, 7) (12, 6) (12, 7) (12, 8) (13, 9) (14, 10) (15, 10) (17, 9) (18, 8) (18, 7) (19, 7) (18, 6) (17, 5) (16, 7) (15, 4) (14, 4) (13, 5) (36, 4) (36, 5) (37, 4) (37, 5) (26, 2) (26, 3) (24, 3) (23, 4) (23, 5) (23, 6) (22, 4) (22, 5) (22, 6) (24, 7) (26, 7) (26, 8)
 
 
-
+  
 class Drawing extends Canvas implements MouseListener, MouseMotionListener
 {
     // the grid size
@@ -43,13 +43,14 @@ class Drawing extends Canvas implements MouseListener, MouseMotionListener
     // all of the cells
     public static Cell cells[][] = new Cell[cell_row_num][cell_row_num];
 
+    Long duration = 100L; // how long between each update
+
     public static void main(String[] args) 
     {
-        // Drawing.Gen();
         JFrame frame = new JFrame("Game");
         Canvas canvas = new Drawing();
         canvas.setSize(cell_row_num * 10, cell_row_num * 10);
-        canvas.setBackground(Color.green);
+        canvas.setBackground(Color.CYAN);
         frame.add(canvas);
         frame.pack();
         frame.setVisible(true);
@@ -60,34 +61,46 @@ class Drawing extends Canvas implements MouseListener, MouseMotionListener
 
     public void mouseClicked(MouseEvent e) 
     {
-        if (e.getButton() == MouseEvent.BUTTON1) 
-        {
-            System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
-        }
+        int noerror;
+        System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
     }
     public void mouseMoved(MouseEvent e) 
     { 
         int noerror;
+        System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
     }
     public void mouseExited(MouseEvent e) 
     { 
         int noerror;
+        System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
     } 
   
     public void mouseEntered(MouseEvent e) 
     { 
         int noerror;
+        System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
     } 
   
     public void mouseReleased(MouseEvent e) 
     { 
         int noerror;
+        System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
     } 
   
     public void mousePressed(MouseEvent e) 
     { 
+        System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
+        // if (e.getButton() == MouseEvent.BUTTON1) 
+        // {
+        //     System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
+        // }
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent arg0) 
+    {
         int noerror;
-    } 
+    }
 
 
     public static void Gen() 
@@ -103,14 +116,37 @@ class Drawing extends Canvas implements MouseListener, MouseMotionListener
                 Drawing.cells[row][column] = new Cell(row, column, false);
             }
         }
+       System.out.println("Do you want to draw or use the console to input? Input d for draw and c for console.");
+        Scanner scan = new Scanner(System.in);      
+        String choice;
+        choice = scan.nextLine().toLowerCase();
+        boolean chosen = false; 
         boolean input_toggle = true; // if true, you draw, if false, you input with the console
+        while (!chosen)
+        {
+            choice = "c";
+            if (choice == "c")
+            {
+                input_toggle = false;
+                chosen = true;
+            }
+            else if (choice == "d")
+            {
+                input_toggle = true;
+                chosen = true;
+            }
+            else
+            {
+                System.out.println("Input " + choice + " is invalid. Please input c or d");
+                choice = scan.nextLine().toLowerCase();
+            }
+        }        
         if (!input_toggle)
         {
             System.out.println("Please input what cells you want to be alive.\nPlease use format: (cellx, celly) (cellx, celly)");
-            Scanner scanner = new Scanner(System.in);
             String input;
-            input = scanner.nextLine();
-            scanner.close();
+            input = scan.nextLine();
+            scan.close();
             String[] locations = input.split("\\) ");
             for (int i = 0; i < locations.length; i++) 
             {
@@ -398,24 +434,16 @@ class Drawing extends Canvas implements MouseListener, MouseMotionListener
     }
 
     // for painting to the canvas
-    public void paint(Graphics g, MouseEvent yeetus) 
+    public void paint(Graphics g/*, MouseEvent yeetus*/) 
     {
         Drawing.Gen();
         while (true) 
-        {
-            // MouseEvent yeetus;
-            //   System.out.println("Number of click: " + e.getClickCount());
-    
-            // if (yeetus.getButton() == MouseEvent.BUTTON1) 
-            // {
-            //     System.out.println("Click position (X, Y):  " + yeetus.getX() + ", " + yeetus.getY());
-            // }
-
+        {   
             // https://stackoverflow.com/questions/24104313/how-do-i-make-a-delay-in-java
             try 
             {
                 //TimeUnit.SECONDS.sleep(1L);
-                TimeUnit.MILLISECONDS.sleep(50);
+                TimeUnit.MILLISECONDS.sleep(duration);
             } 
             catch (InterruptedException e) 
             {
