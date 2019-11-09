@@ -1,6 +1,8 @@
 import java.util.*;
 import javax.swing.*; 
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 //https://web.stanford.edu/class/archive/cs/cs108/cs108.1092/handouts/27PaintRepaint.pdf
 // https://courses.cs.washington.edu/courses/cse341/98au/java/jdk1.2beta4/docs/api/java/awt/Canvas.html#paint(java.awt.Graphics)
 import java.awt.event.MouseWheelEvent;
@@ -14,8 +16,100 @@ import java.awt.event.MouseWheelEvent;
 // (2, 6) (2, 7) (3, 6) (3, 7) (12, 6) (12, 7) (12, 8) (13, 9) (14, 10) (15, 10) (17, 9) (18, 8) (18, 7) (19, 7) (18, 6) (17, 5) (16, 7) (15, 4) (14, 4) (13, 5) (36, 4) (36, 5) (37, 4) (37, 5) (26, 2) (26, 3) (24, 3) (23, 4) (23, 5) (23, 6) (22, 4) (22, 5) (22, 6) (24, 7) (26, 7) (26, 8)
 
 //java.awt.event.MouseAdapter
-class Drawing extends java.awt.Canvas implements java.awt.event.MouseListener, java.awt.event.MouseMotionListener, java.awt.event.MouseWheelListener
+class ExperimentalDrawing extends java.awt.Canvas 
 {
+    private static class fra extends JFrame implements java.awt.event.MouseListener, java.awt.event.MouseMotionListener, java.awt.event.MouseWheelListener 
+    {
+        JFrame frame = new JFrame("Ur Mom ;)");
+        public void mouseWheelMoved(MouseWheelEvent e) 
+        {
+            String message;
+            int notches = e.getWheelRotation();
+            if (notches < 0) 
+            {
+                message = "Mouse wheel moved UP " + -notches + " notch(es)\n";
+                cellScale += (-notches);
+                scrolled = true;
+            } 
+            else 
+            {
+                message = "Mouse wheel moved DOWN " + notches + " notch(es)\n";
+                cellScale -= notches;
+                if (cellScale <= 0) 
+                {
+                    cellScale = 1;
+                }
+                scrolled = true;
+            }
+            if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) 
+            {
+                message += "Scroll type: WHEEL_UNIT_SCROLL\n";
+                message += "Scroll amount: " + e.getScrollAmount() + " unit increments per notch\n";
+                message += "Units to scroll: " + e.getUnitsToScroll() + " unit increments\n";
+            } 
+            else 
+            { // scroll type == MouseWheelEvent.WHEEL_BLOCK_SCROLL
+                message += "Scroll type: WHEEL_BLOCK_SCROLL\n";
+            }
+            System.out.println(message);
+        }
+
+        @Override
+        public void mouseClicked(java.awt.event.MouseEvent e) 
+        {
+            System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
+        }
+
+        @Override
+        public void mouseMoved(java.awt.event.MouseEvent e) 
+        {
+            System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
+        }
+
+        @Override
+        public void mouseExited(java.awt.event.MouseEvent e) 
+        {
+            System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
+        }
+
+        @Override
+        public void mouseEntered(java.awt.event.MouseEvent e) 
+        {
+            System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
+        }
+
+        @Override
+        public void mouseReleased(java.awt.event.MouseEvent e) 
+        {
+            System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
+        }
+
+        @Override
+        public void mousePressed(java.awt.event.MouseEvent e) 
+        {
+            if (e.getButton() == java.awt.event.MouseEvent.BUTTON1) 
+            {
+                System.out.println("Click position (X, Y): " + e.getX() + ", " + e.getY());
+                if (input_toggle) 
+                {
+                    cells[e.getX() / cellScale][e.getY() / cellScale].alive = true;
+                }
+            }
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) 
+        {
+            if (e.getButton() == java.awt.event.MouseEvent.BUTTON1) 
+            {
+                System.out.println("Click position (X, Y): " + e.getX() + ", " + e.getY());
+                if (input_toggle) 
+                {
+                    cells[e.getX() / cellScale][e.getY() / cellScale].alive = true;
+                }
+            }
+        }
+    }
     // the grid size
     static int cell_row_num = 100;
     // how big is a cell on the screen
@@ -25,110 +119,26 @@ class Drawing extends java.awt.Canvas implements java.awt.event.MouseListener, j
     // unimportant var used in commented out code
     static String theIn;
     static boolean scrolled = false; // if the user scrolled to adjust zoom
-    static JFrame frame = new JFrame("Ur Mom ;)");
-    static boolean input_toggle = false; // if true, you draw, if false, you input with the console
-
+    static boolean input_toggle = false; // if true, you draw, if false, you input with the console 
 
     Long duration = 10L; // how long between each update
 
     public static void main(String[] args) 
     {
         //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        fra yeet = new fra();
+        yeet.frame.addMouseListener(yeet);
+        yeet.frame.addMouseMotionListener(yeet);
+        yeet.frame.addMouseWheelListener(yeet);
+        yeet.addMouseListener(yeet);
+        yeet.addMouseMotionListener(yeet);
+        yeet.addMouseWheelListener(yeet);
         java.awt.Canvas canvas = new Drawing();
         canvas.setSize(cell_row_num * 10, cell_row_num * 10);
         canvas.setBackground(java.awt.Color.CYAN);
-        frame.add(canvas);
-        frame.pack();
-        frame.setVisible(true);
-    }
-
-    @Override
-    public void mouseWheelMoved(MouseWheelEvent e) 
-    {
-        String message;
-        int notches = e.getWheelRotation();
-        if (notches < 0) 
-        {
-            message = "Mouse wheel moved UP " + -notches + " notch(es)\n";
-            cellScale += (-notches);
-            scrolled = true;
-        } 
-        else 
-        {
-            message = "Mouse wheel moved DOWN " + notches + " notch(es)\n";
-            cellScale -= notches;
-            if (cellScale <= 0)
-            {
-                cellScale = 1;
-            }
-            scrolled = true;
-        }
-        if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) 
-        {
-            message += "Scroll type: WHEEL_UNIT_SCROLL\n";
-            message += "Scroll amount: " + e.getScrollAmount() + " unit increments per notch\n";
-            message += "Units to scroll: " + e.getUnitsToScroll() + " unit increments\n";
-        } 
-        else 
-        { //scroll type == MouseWheelEvent.WHEEL_BLOCK_SCROLL
-            message += "Scroll type: WHEEL_BLOCK_SCROLL\n";
-        }
-        System.out.println(message);
-    }
-     @Override
-    public void mouseClicked(java.awt.event.MouseEvent e) 
-    {
-        System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
-    }
-
-    @Override
-    public void mouseMoved(java.awt.event.MouseEvent e) 
-    {
-        System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
-    }
-
-    @Override
-    public void mouseExited(java.awt.event.MouseEvent e) 
-    {
-        System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
-    }
-
-    @Override
-    public void mouseEntered(java.awt.event.MouseEvent e) 
-    {
-        System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
-    }
-
-    @Override
-    public void mouseReleased(java.awt.event.MouseEvent e) 
-    {
-        System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
-    }
-
-    @Override
-    public void mousePressed(java.awt.event.MouseEvent e) 
-    {
-        if (e.getButton() == java.awt.event.MouseEvent.BUTTON1)
-        {
-            System.out.println("Click position (X, Y): " + e.getX() + ", " + e.getY());
-            if (input_toggle)
-            {
-                cells[e.getX()/cellScale][e.getY()/cellScale].alive = true;
-            }
-        }
-    }
-
-    @Override
-    public void mouseDragged(java.awt.event.MouseEvent e) 
-    {
-        if (e.getButton() == java.awt.event.MouseEvent.BUTTON1)
-        {
-            System.out.println("Click position (X, Y): " + e.getX() + ", " + e.getY());
-            if (input_toggle)
-            {
-                cells[e.getX()/cellScale][e.getY()/cellScale].alive = true;
-            }
-        }
+        yeet.frame.add(canvas);
+        yeet.frame.pack();
+        yeet.frame.setVisible(true);
     }
 
     public static void Gen() // generates all the cells before the game starts
@@ -520,12 +530,6 @@ class Drawing extends java.awt.Canvas implements java.awt.event.MouseListener, j
     public void paint(java.awt.Graphics g/* , MouseEvent yeetus */) 
     {
         Drawing.Gen();
-        frame.addMouseWheelListener(this);
-        frame.addMouseMotionListener(this);
-        frame.addMouseListener(this); 
-        addMouseWheelListener(this);
-        addMouseMotionListener(this);
-        addMouseListener(this); 
         while (true) 
         {
             // https://stackoverflow.com/questions/24104313/how-do-i-make-a-delay-in-java
@@ -620,3 +624,5 @@ class Cell
         this.alive = true;
     }
 }  
+
+
