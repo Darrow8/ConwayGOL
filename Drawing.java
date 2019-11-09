@@ -1,25 +1,7 @@
-import java.awt.Color; //Import the Graphic Library for Color (Abstract Window Toolkit)
-import java.awt.Canvas; //Import the Graphic Library for Canvas (Abstract Window Toolkit)
-import java.awt.Graphics; //Import the Graphic Library for Graphics (Abstract Window Toolkit)
-//import java.awt.Component; //Import the Graphic Library for Components (Abstract Window Toolkit)
-import javax.swing.JFrame;//Import the Graphic Library for JFrame (Abstract Window Toolkit)
 import java.util.*;
-//import java.io.*;
-// import java.awt.*;
-//import java.awt.event.*;
-//import javax.swing.*;
-import java.util.Scanner;
 import javax.swing.*; 
-import java.awt.event.*; 
-// import java.util.concurrent.TimeUnit;
+import java.awt.*;
 //https://web.stanford.edu/class/archive/cs/cs108/cs108.1092/handouts/27PaintRepaint.pdf
-import java.util.concurrent.TimeUnit;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseAdapter;
-
-import javax.swing.JFrame;
-import javax.swing.JTextArea;
-
 // https://courses.cs.washington.edu/courses/cse341/98au/java/jdk1.2beta4/docs/api/java/awt/Canvas.html#paint(java.awt.Graphics)
 
 
@@ -36,21 +18,24 @@ import javax.swing.JTextArea;
 
 
   
-class Drawing extends Canvas implements MouseListener, MouseMotionListener
+class Drawing extends java.awt.Canvas implements java.awt.event.MouseListener, java.awt.event.MouseMotionListener
 {
     // the grid size
     public static int cell_row_num = 100;
+    public static int cellScale = 10;
     // all of the cells
     public static Cell cells[][] = new Cell[cell_row_num][cell_row_num];
+    public static String theIn;
+    public int windowScale = 1;
 
-    Long duration = 100L; // how long between each update
+    Long duration = 10L; // how long between each update
 
     public static void main(String[] args) 
     {
-        JFrame frame = new JFrame("Game");
-        Canvas canvas = new Drawing();
+        JFrame frame = new JFrame("Ur Mom ;)");
+        java.awt.Canvas canvas = new Drawing();
         canvas.setSize(cell_row_num * 10, cell_row_num * 10);
-        canvas.setBackground(Color.CYAN);
+        canvas.setBackground(java.awt.Color.CYAN);
         frame.add(canvas);
         frame.pack();
         frame.setVisible(true);
@@ -59,35 +44,30 @@ class Drawing extends Canvas implements MouseListener, MouseMotionListener
     // generating all of the cells
 
 
-    public void mouseClicked(MouseEvent e) 
+    public void mouseClicked(java.awt.event.MouseEvent e) 
     {
-        int noerror;
         System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
     }
-    public void mouseMoved(MouseEvent e) 
+    public void mouseMoved(java.awt.event.MouseEvent e) 
     { 
-        int noerror;
         System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
     }
-    public void mouseExited(MouseEvent e) 
+    public void mouseExited(java.awt.event.MouseEvent e) 
     { 
-        int noerror;
         System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
     } 
   
-    public void mouseEntered(MouseEvent e) 
+    public void mouseEntered(java.awt.event.MouseEvent e) 
     { 
-        int noerror;
         System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
     } 
   
-    public void mouseReleased(MouseEvent e) 
+    public void mouseReleased(java.awt.event.MouseEvent e) 
     { 
-        int noerror;
         System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
     } 
   
-    public void mousePressed(MouseEvent e) 
+    public void mousePressed(java.awt.event.MouseEvent e) 
     { 
         System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
         // if (e.getButton() == MouseEvent.BUTTON1) 
@@ -97,7 +77,7 @@ class Drawing extends Canvas implements MouseListener, MouseMotionListener
     }
 
     @Override
-    public void mouseDragged(MouseEvent arg0) 
+    public void mouseDragged(java.awt.event.MouseEvent arg0) 
     {
         int noerror;
     }
@@ -121,7 +101,7 @@ class Drawing extends Canvas implements MouseListener, MouseMotionListener
         String choice;
         choice = scan.nextLine().toLowerCase();
         boolean chosen = false; 
-        boolean input_toggle = true; // if true, you draw, if false, you input with the console
+        boolean input_toggle = false; // if true, you draw, if false, you input with the console
         while (!chosen)
         {
             if (choice.equals("c"))
@@ -145,6 +125,7 @@ class Drawing extends Canvas implements MouseListener, MouseMotionListener
             System.out.println("Please input what cells you want to be alive.\nPlease use format: (cellx, celly) (cellx, celly)");
             String input;
             input = scan.nextLine();
+            theIn = input;
             scan.close();
             String[] locations = input.split("\\) ");
             for (int i = 0; i < locations.length; i++) 
@@ -183,6 +164,10 @@ class Drawing extends Canvas implements MouseListener, MouseMotionListener
         // DETERMINE CELL SURROUNDING VAL
         // rows
         // System.out.println(cells.length);
+        boolean border_top = false;
+        boolean border_bottom = false;
+        boolean border_left = false;
+        boolean border_right = false;
         for (int i = 0; i < cells.length; i++) 
         {
             // collumns
@@ -192,11 +177,18 @@ class Drawing extends Canvas implements MouseListener, MouseMotionListener
             {
                 // System.out.println(i + " " + a);
                 int surrounding = 0;
-
                 if (i == 0) 
                 {
+                    if(cells[i][a].alive)
+                    {
+                        border_left = true;
+                    }
                     if (a == 0) // left top
                     {
+                        if(cells[i][a].alive)
+                        {
+                            border_top = true;
+                        }
                         if (cells[i + 1][a].alive == true) 
                         {
                             surrounding += 1;
@@ -209,8 +201,13 @@ class Drawing extends Canvas implements MouseListener, MouseMotionListener
                         {
                             surrounding += 1;
                         }
-                    } else if (a == (cells[i].length - 1)) // left bottom
+                    } 
+                    else if (a == (cells[i].length - 1)) // left bottom
                     {
+                        if (cells[i][a].alive)
+                        {
+                            border_bottom = true;
+                        }
                         if (cells[i][a - 1].alive == true) 
                         {
                             surrounding += 1;
@@ -223,7 +220,8 @@ class Drawing extends Canvas implements MouseListener, MouseMotionListener
                         {
                             surrounding += 1;
                         }
-                    } else // left middle
+                    } 
+                    else // left middle
                     {
                         if (cells[i][a + 1].alive == true) // code keeps erroring here
                         {
@@ -249,8 +247,15 @@ class Drawing extends Canvas implements MouseListener, MouseMotionListener
                 } 
                 else if (i == cells.length - 1) 
                 {
+                    if (cells[i][a].alive){
+                        border_right = true;
+                    }
                     if (a == 0) // right top
                     {
+                        if (cells[i][a].alive)
+                        {
+                            border_top = true;
+                        }
                         if (cells[i][a + 1].alive == true) 
                         {
                             surrounding += 1;
@@ -266,6 +271,10 @@ class Drawing extends Canvas implements MouseListener, MouseMotionListener
                     } 
                     else if (a == cells[i].length - 1) // right bottom
                     {
+                        if (cells[i][a].alive)
+                        {
+                            border_bottom = true;
+                        }
                         if (cells[i][a - 1].alive == true) 
                         {
                             surrounding += 1;
@@ -305,6 +314,10 @@ class Drawing extends Canvas implements MouseListener, MouseMotionListener
                 } 
                 else if (a == 0) // top middle
                 {
+                    if (cells[i][a].alive)
+                    {
+                        border_top = true;
+                    }
                     if (cells[i][a + 1].alive == true) 
                     {
                         surrounding += 1;
@@ -328,6 +341,10 @@ class Drawing extends Canvas implements MouseListener, MouseMotionListener
                 } 
                 else if (a == cells[i].length - 1) // bottom middle
                 {
+                    if (cells[i][a].alive)
+                    {
+                        border_bottom = true;
+                    }
                     if (cells[i][a - 1].alive == true) 
                     {
                         surrounding += 1;
@@ -430,10 +447,65 @@ class Drawing extends Canvas implements MouseListener, MouseMotionListener
                 }
             }
         }
+        if (border_bottom || border_top || border_left || border_right)
+        {
+            int old_num = cell_row_num;
+            cell_row_num += 2; // once you think about it, adding ten kinda made sense
+
+            Cell newCells[][] = new Cell[cell_row_num][cell_row_num];
+            for (int i = 0; i < newCells.length; i++)
+            {
+                for (int a = 0; a < newCells[i].length; a++)
+                {
+                    newCells[i][a] = new Cell(i, a, false);
+                }
+            }
+            for (int i = 0; i < cells.length; i++)
+            {
+                for (int a = 0; a < cells[i].length; a++)
+                {
+                    newCells[i+((cell_row_num-old_num)/2)][a+((cell_row_num-old_num)/2)] = new Cell(i, a, cells[i][a].alive);
+                }
+            }
+            if (cellScale > 1)
+            {
+                cellScale--;
+            }
+            cells = newCells;
+        }
+
+        /*(if (border_bottom || border_top || border_left || border_right)
+        {
+            cell_row_num += 2;
+            Cell newCells[][] = new Cell[cell_row_num][cell_row_num];
+            for (int x = 0; x < newCells.length; x++)
+            {
+                for (int z = 0; z < newCells[x].length; z++)
+                {
+                    newCells[x][z] = new Cell(x, z, false);
+                }
+            }
+            for (int i = 0; i < cells.length; i++)
+            {
+                for (int a = 0; a < cells[i].length; a++)
+                {
+                    if (theIn.equals("(2, 6) (2, 7) (3, 6) (3, 7) (12, 6) (12, 7) (12, 8) (13, 9) (14, 10) (15, 10) (17, 9) (18, 8) (18, 7) (19, 7) (18, 6) (17, 5) (16, 7) (15, 4) (14, 4) (13, 5) (36, 4) (36, 5) (37, 4) (37, 5) (26, 2) (26, 3) (24, 3) (23, 4) (23, 5) (23, 6) (22, 4) (22, 5) (22, 6) (24, 7) (26, 7) (26, 8)"))
+                    {
+                        newCells[i][a].alive = cells[i][a].alive;
+                    }
+                    else
+                    {
+                        newCells[i+1][a+1].alive = cells[i][a].alive;
+                    }
+                    
+                }
+            }
+            cells = newCells;
+        }*/
     }
 
     // for painting to the canvas
-    public void paint(Graphics g/*, MouseEvent yeetus*/) 
+    public void paint(java.awt.Graphics g/*, MouseEvent yeetus*/) 
     {
         Drawing.Gen();
         while (true) 
@@ -442,7 +514,7 @@ class Drawing extends Canvas implements MouseListener, MouseMotionListener
             try 
             {
                 //TimeUnit.SECONDS.sleep(1L);
-                TimeUnit.MILLISECONDS.sleep(duration);
+                java.util.concurrent.TimeUnit.MILLISECONDS.sleep(duration);
             } 
             catch (InterruptedException e) 
             {
@@ -458,50 +530,40 @@ class Drawing extends Canvas implements MouseListener, MouseMotionListener
         }*/
         // Drawing.Game();
             Drawing.Game();
-            for (int row = 0; row < cell_row_num; row++) 
+            for (int row = 0; row < cell_row_num; row++)
             {
                 for (int column = 0; column < cell_row_num; column++) 
                 {
-                // if the cell is true, make the rect white
-                    if (Drawing.cells[row][column].alive) 
+                    if (Drawing.cells[row][column].alive)
                     {
-                        g.setColor(Color.white);
-                        g.fillRect(row * 10, column * 10, 10, 10);
-                    } 
-                    else 
-                    {
-                        g.setColor(Color.black);
-                        g.fillRect(row * 10, column * 10, 10, 10);
+                        g.setColor(java.awt.Color.white);
+                        g.fillRect(row * cellScale, column * cellScale, cellScale, cellScale);
                     }
-                }   
-                // System.out.println(cells[column][row].alive);
+                    else
+                    {
+                        g.setColor(java.awt.Color.black);
+                        g.fillRect(row * cellScale, column * cellScale, cellScale, cellScale);
+                    }
+                }
+                // Blacks out space not used by the two dimensional array of cells
+                /*diagonal*/g.fillRect(cellScale*Drawing.cells[0].length, cellScale*Drawing.cells[0].length, 1000-(cellScale*Drawing.cells[0].length), 1000-(cellScale*Drawing.cells[0].length));
+                /*right*/g.fillRect(cellScale*Drawing.cells[0].length,  0, 1000-(cellScale*Drawing.cells[0].length), 1000);
+                /*left*/g.fillRect(0,  cellScale*Drawing.cells[0].length, 1000, 1000-(cellScale*Drawing.cells[0].length));
             }
             repaint();
         }
     }
-
-    public void update(Graphics g) 
-    {
-        Drawing.Game();
-        for (int row = 0; row < cell_row_num; row++) 
-        {
-            for (int column = 0; column < cell_row_num; column++) 
-            {
-                // if the cell is true, make the rect white
-                if (Drawing.cells[row][column].alive) 
-                {
-                    g.setColor(Color.white);
-                    g.fillRect(row * 10, column * 10, 10, 10);
-                } else 
-                {
-                    g.setColor(Color.black);
-                    g.fillRect(row * 10, column * 10, 10, 10);
-                }
-            }
-        }
-        // repaint();
-    }
-
+    
+    // public static void pushBack(){
+    //     for (int i = 0; i < cells.length; i++)
+    //     {
+    //         for (int a = 0; a < cells[i].length; a++)
+    //         {
+    //             cells[i][a].xpos++;
+    //             cells[i][a].ypos++;
+    //         }
+    //     }
+    // }
     private static int backup_surrounding(int x, int y)
     {
         int surrounding = 0;
